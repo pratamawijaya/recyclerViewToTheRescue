@@ -6,12 +6,15 @@ import java.util.List;
  * Created by brett on 5/21/15.
  */
 public interface ListView<T> {
-    interface Events {
-        void onItemClicked(int position);
-        void onAddNewItem();
-        void onRemoveItem(int position);
-    }
+  interface Events {
+    void onItemClicked(int position);
 
-    void setEventsListener(Events listener);
-    void setList(List<T> list);
+    void onAddNewItem();
+
+    void onRemoveItem(int position);
+  }
+
+  void setEventsListener(Events listener);
+
+  void setList(List<T> list);
 }

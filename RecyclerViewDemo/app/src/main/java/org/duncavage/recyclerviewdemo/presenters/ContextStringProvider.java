@@ -6,14 +6,13 @@ import android.content.Context;
  * Created by brett on 6/1/15.
  */
 public class ContextStringProvider implements StringProvider {
-    private final Context context;
+  private final Context context;
 
-    public ContextStringProvider(Context context) {
-        this.context = context;
-    }
+  public ContextStringProvider(Context context) {
+    this.context = context;
+  }
 
-    @Override
-    public String getStringForResource(int id) {
-        return context.getString(id);
-    }
+  @Override public String getStringForResource(int id) {
+    return context.getString(id);
+  }
 }

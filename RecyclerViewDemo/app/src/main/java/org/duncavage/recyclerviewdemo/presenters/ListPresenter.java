@@ -10,25 +10,25 @@ import java.util.List;
  * The template type indicates the view model type that will be produced by this presenter.
  */
 public abstract class ListPresenter<T> {
-    private final ListView<T> view;
-    private List<T> viewModels;
+  private final ListView<T> view;
+  private List<T> viewModels;
 
-    public ListPresenter(ListView<T> view) {
-        this.view = view;
-    }
+  public ListPresenter(ListView<T> view) {
+    this.view = view;
+  }
 
-    protected ListView<T> getView() {
-        return view;
-    }
+  protected ListView<T> getView() {
+    return view;
+  }
 
-    protected List<T> getViewModels() {
-        return viewModels;
-    }
+  protected List<T> getViewModels() {
+    return viewModels;
+  }
 
-    public abstract void load();
+  public abstract void load();
 
-    protected void setViewModels(List<T> viewModels) {
-        this.viewModels = viewModels;
-        view.setList(viewModels);
-    }
+  protected void setViewModels(List<T> viewModels) {
+    this.viewModels = viewModels;
+    view.setList(viewModels);
+  }
 }

@@ -32,136 +32,130 @@ import java.util.List;
  * Created by brett on 5/21/15.
  */
 public class RecyclerViewFragment extends Fragment implements ListView<ListItemViewModel> {
-    private static final String LAYOUT_TYPE_ARG_KEY = "layoutType";
-    private ListView.Events eventsListener;
+  private static final String LAYOUT_TYPE_ARG_KEY = "layoutType";
+  private ListView.Events eventsListener;
 
-    public enum LayoutType {
-        Linear,
-        Grid,
-        GridWithGroupHeadings,
-        GridWithHeadingsAndSpans,
-        GridWithCarousel,
+  public enum LayoutType {
+    Linear,
+    Grid,
+    GridWithGroupHeadings,
+    GridWithHeadingsAndSpans,
+    GridWithCarousel,
+  }
+
+  public static RecyclerViewFragment newInstance(LayoutType layoutType) {
+    Bundle args = new Bundle();
+    args.putString(LAYOUT_TYPE_ARG_KEY, layoutType.name());
+    RecyclerViewFragment f = new RecyclerViewFragment();
+    f.setArguments(args);
+    return f;
+  }
+
+  private RecyclerView recyclerView;
+  private ImageLoader imageLoader;
+  private DemoDataListPresenter listPresenter;
+  private LayoutType layoutType = LayoutType.Linear;
+  private int gridSpanCount;
+
+  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    if (getArguments() != null && getArguments().containsKey(LAYOUT_TYPE_ARG_KEY)) {
+      String type = getArguments().getString(LAYOUT_TYPE_ARG_KEY);
+      layoutType = LayoutType.valueOf(type);
     }
+    imageLoader = DemoApplication.getInstance().getImageLoader();
+    gridSpanCount = getResources().getInteger(R.integer.grid_span_count);
+  }
 
-    public static RecyclerViewFragment newInstance(LayoutType layoutType) {
-        Bundle args = new Bundle();
-        args.putString(LAYOUT_TYPE_ARG_KEY, layoutType.name());
-        RecyclerViewFragment f = new RecyclerViewFragment();
-        f.setArguments(args);
-        return f;
-    }
+  @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    View rootView = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
-    private RecyclerView recyclerView;
-    private ImageLoader imageLoader;
-    private DemoDataListPresenter listPresenter;
-    private LayoutType layoutType = LayoutType.Linear;
-    private int gridSpanCount;
+    recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+    recyclerView.setLayoutManager(createLayoutManager(layoutType));
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null && getArguments().containsKey(LAYOUT_TYPE_ARG_KEY)) {
-            String type = getArguments().getString(LAYOUT_TYPE_ARG_KEY);
-            layoutType = LayoutType.valueOf(type);
-        }
-        imageLoader = DemoApplication.getInstance().getImageLoader();
-        gridSpanCount = getResources().getInteger(R.integer.grid_span_count);
-    }
+    recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(getActivity(),
+        new RecyclerViewItemClickListener.OnItemGestureListener() {
+          @Override public void onItemClick(View view, int position) {
+            view.performClick();
+            eventsListener.onRemoveItem(position);
+            recyclerView.getAdapter().notifyItemRemoved(position);
+          }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_recyclerview, container, false);
+          @Override public void onItemLongClick(View view, int position) {
 
-        recyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(createLayoutManager(layoutType));
-
-        recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(getActivity(),
-                new RecyclerViewItemClickListener.OnItemGestureListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                view.performClick();
-                eventsListener.onRemoveItem(position);
-                recyclerView.getAdapter().notifyItemRemoved(position);
-            }
-
-            @Override
-            public void onItemLongClick(View view, int position) {
-
-            }
+          }
         }));
 
-        return rootView;
-    }
+    return rootView;
+  }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        // Now that the view has been created, create any presenters needed to get data.
-        listPresenter = createListPresenter();
-        listPresenter.load();
-    }
+  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    // Now that the view has been created, create any presenters needed to get data.
+    listPresenter = createListPresenter();
+    listPresenter.load();
+  }
 
-    public void addNewItem() {
-        eventsListener.onAddNewItem();
-        recyclerView.getAdapter().notifyItemInserted(0);
-        recyclerView.scrollToPosition(0);
-    }
+  public void addNewItem() {
+    eventsListener.onAddNewItem();
+    recyclerView.getAdapter().notifyItemInserted(0);
+    recyclerView.scrollToPosition(0);
+  }
 
-    private DemoDataListPresenter createListPresenter() {
-        StringProvider stringProvider = DemoApplication.getInstance().getStringProvider();
-        switch (layoutType) {
-            case Linear:
-                return new DemoDataListPresenter(this, true, stringProvider);
-            case Grid:
-                return new GridDemoDataListPresenter(this, stringProvider);
-            case GridWithGroupHeadings:
-                return new GridWithHeadingsDemoDataListPresenter(this, gridSpanCount, stringProvider);
-            case GridWithHeadingsAndSpans:
-                return new GridWithHeadingsAndSpansDemoDataListPresenter(this, gridSpanCount, stringProvider);
-            case GridWithCarousel:
-                return new GridWithCarouselsDemoDataListPresenter(this, gridSpanCount, stringProvider);
-        }
-        return null;
+  private DemoDataListPresenter createListPresenter() {
+    StringProvider stringProvider = DemoApplication.getInstance().getStringProvider();
+    switch (layoutType) {
+      case Linear:
+        return new DemoDataListPresenter(this, true, stringProvider);
+      case Grid:
+        return new GridDemoDataListPresenter(this, stringProvider);
+      case GridWithGroupHeadings:
+        return new GridWithHeadingsDemoDataListPresenter(this, gridSpanCount, stringProvider);
+      case GridWithHeadingsAndSpans:
+        return new GridWithHeadingsAndSpansDemoDataListPresenter(this, gridSpanCount,
+            stringProvider);
+      case GridWithCarousel:
+        return new GridWithCarouselsDemoDataListPresenter(this, gridSpanCount, stringProvider);
     }
+    return null;
+  }
 
-    private RecyclerView.LayoutManager createLayoutManager(LayoutType type) {
-        if (type == null) {
-            return new LinearLayoutManager(getActivity());
-        }
-        switch (type) {
-            case Linear:
-                return new LinearLayoutManager(getActivity());
-            case Grid:
-            case GridWithGroupHeadings:
-            case GridWithHeadingsAndSpans:
-            case GridWithCarousel:
-                return new GridLayoutManager(getActivity(), gridSpanCount);
-            default:
-                return new LinearLayoutManager(getActivity());
-        }
+  private RecyclerView.LayoutManager createLayoutManager(LayoutType type) {
+    if (type == null) {
+      return new LinearLayoutManager(getActivity());
     }
-
-    // ListView methods
-
-    @Override
-    public void setList(List<ListItemViewModel> list) {
-        ListItemViewHolderAdapter adapter;
-        if (layoutType == LayoutType.GridWithCarousel) {
-            adapter = new ListItemRecyclerViewHolderAdapter(list, imageLoader,
-                    DemoApplication.getInstance().getStringProvider());
-        } else {
-            adapter = new ListItemViewHolderAdapter<>(list, imageLoader);
-        }
-        recyclerView.swapAdapter(adapter, false);
-        if (recyclerView.getLayoutManager() instanceof GridLayoutManager) {
-            GridLayoutManager glm = (GridLayoutManager) recyclerView.getLayoutManager();
-            glm.setSpanSizeLookup(adapter.getSpanSizeLookup());
-        }
+    switch (type) {
+      case Linear:
+        return new LinearLayoutManager(getActivity());
+      case Grid:
+      case GridWithGroupHeadings:
+      case GridWithHeadingsAndSpans:
+      case GridWithCarousel:
+        return new GridLayoutManager(getActivity(), gridSpanCount);
+      default:
+        return new LinearLayoutManager(getActivity());
     }
+  }
 
-    @Override
-    public void setEventsListener(Events listener) {
-        eventsListener = listener;
+  // ListView methods
+
+  @Override public void setList(List<ListItemViewModel> list) {
+    ListItemViewHolderAdapter adapter;
+    if (layoutType == LayoutType.GridWithCarousel) {
+      adapter = new ListItemRecyclerViewHolderAdapter(list, imageLoader,
+          DemoApplication.getInstance().getStringProvider());
+    } else {
+      adapter = new ListItemViewHolderAdapter<>(list, imageLoader);
     }
+    recyclerView.swapAdapter(adapter, false);
+    if (recyclerView.getLayoutManager() instanceof GridLayoutManager) {
+      GridLayoutManager glm = (GridLayoutManager) recyclerView.getLayoutManager();
+      glm.setSpanSizeLookup(adapter.getSpanSizeLookup());
+    }
+  }
+
+  @Override public void setEventsListener(Events listener) {
+    eventsListener = listener;
+  }
 }

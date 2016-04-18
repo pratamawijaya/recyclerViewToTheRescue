@@ -16,29 +16,28 @@ import android.widget.FrameLayout;
  * padding.
  */
 public class FullDisplayWidthView extends FrameLayout {
-    public FullDisplayWidthView(Context context) {
-        super(context);
-    }
+  public FullDisplayWidthView(Context context) {
+    super(context);
+  }
 
-    public FullDisplayWidthView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
+  public FullDisplayWidthView(Context context, AttributeSet attrs) {
+    super(context, attrs);
+  }
 
-    public FullDisplayWidthView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
+  public FullDisplayWidthView(Context context, AttributeSet attrs, int defStyleAttr) {
+    super(context, attrs, defStyleAttr);
+  }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int displayWidth = getResources().getDisplayMetrics().widthPixels;
-        super.onMeasure(MeasureSpec.makeMeasureSpec(displayWidth, MeasureSpec.EXACTLY), heightMeasureSpec);
-    }
+  @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    int displayWidth = getResources().getDisplayMetrics().widthPixels;
+    super.onMeasure(MeasureSpec.makeMeasureSpec(displayWidth, MeasureSpec.EXACTLY),
+        heightMeasureSpec);
+  }
 
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        int displayWidth = getResources().getDisplayMetrics().widthPixels;
-        setLeft(0);
-        setRight(displayWidth);
-        super.onLayout(changed, 0, top, displayWidth, bottom);
-    }
+  @Override protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+    int displayWidth = getResources().getDisplayMetrics().widthPixels;
+    setLeft(0);
+    setRight(displayWidth);
+    super.onLayout(changed, 0, top, displayWidth, bottom);
+  }
 }

@@ -17,26 +17,25 @@ import java.util.List;
 /**
  * Created by brett on 5/27/15.
  */
-public class ListItemRecyclerViewHolderAdapter extends ListItemViewHolderAdapter<ListItemViewModel> {
-    private final StringProvider stringProvider;
+public class ListItemRecyclerViewHolderAdapter
+    extends ListItemViewHolderAdapter<ListItemViewModel> {
+  private final StringProvider stringProvider;
 
-    public ListItemRecyclerViewHolderAdapter(List<ListItemViewModel> viewModels,
-                                             ImageLoader imageLoader,
-                                             StringProvider stringProvider) {
-        super(viewModels, imageLoader);
-        this.stringProvider = stringProvider;
-    }
+  public ListItemRecyclerViewHolderAdapter(List<ListItemViewModel> viewModels,
+      ImageLoader imageLoader, StringProvider stringProvider) {
+    super(viewModels, imageLoader);
+    this.stringProvider = stringProvider;
+  }
 
-    @Override
-    public ListItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == R.layout.list_item_recyclerview) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-            ListItemRecyclerViewHolder holder = new ListItemRecyclerViewHolder(view,
-                    getImageLoader(), stringProvider);
-            holder.load();
-            return holder;
-        } else {
-            return super.onCreateViewHolder(parent, viewType);
-        }
+  @Override public ListItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    if (viewType == R.layout.list_item_recyclerview) {
+      View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
+      ListItemRecyclerViewHolder holder =
+          new ListItemRecyclerViewHolder(view, getImageLoader(), stringProvider);
+      holder.load();
+      return holder;
+    } else {
+      return super.onCreateViewHolder(parent, viewType);
     }
+  }
 }

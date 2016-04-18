@@ -3,19 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/toolbar_height">
+    android:paddingTop="@dimen/toolbar_height"
+    >
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager"
+  <android.support.v4.view.ViewPager
+      android:id="@+id/view_pager"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+
+    <android.support.v4.view.PagerTabStrip
+        android:id="@+id/tab_strip"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="@dimen/tab_strip_height"
+        android:layout_gravity="top"
+        />
 
-        <android.support.v4.view.PagerTabStrip
-            android:id="@+id/tab_strip"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/tab_strip_height"
-            android:layout_gravity="top"/>
-
-    </android.support.v4.view.ViewPager>
+  </android.support.v4.view.ViewPager>
 
 </FrameLayout>
